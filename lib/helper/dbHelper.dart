@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:final_practical_exam/model/moodDbModel.dart';
 import 'package:final_practical_exam/model/moodModel.dart';
+import 'package:final_practical_exam/model/quotesDbmodel.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,8 +26,11 @@ class DbHelper {
 
       String qry1 =
           "CREATE TABLE IF NOT EXISTS quotes(quote_id INTEGER NOT NULL, quoteMood TEXT NOT NULL, quote TEXT NOT NULL, author TEXT NOT NULL);";
+      String qry2 =
+          "CREATE TABLE IF NOT EXISTS displayQuotes(quote_id INTEGER, quoteMood TEXT NOT NULL, quote TEXT NOT NULL, author TEXT NOT NULL);";
       await db.execute(qry);
       await db.execute(qry1);
+      await db.execute(qry2);
     });
   }
 
@@ -85,5 +89,17 @@ class DbHelper {
         res.map((e) => moodDbModel.formMap(data: e)).toList();
 
     return allMoods;
+  }
+
+  Future<List<QuotesDabModel>> fetchAllQuotes({required String mood}) async {
+    await initDb();
+    String qry = "SELECT * FROM quotes WHERE quoteMood = ?;";
+    List args = [mood];
+
+    List<Map<String, dynamic>> res = await db!.rawQuery(qry, args);
+    List<QuotesDabModel> allQuotes =
+        res.map((e) => QuotesDabModel.formMap(data: e)).toList();
+
+    return allQuotes;
   }
 }

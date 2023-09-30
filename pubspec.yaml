@@ -41,6 +41,7 @@ dependencies:
   sqflite:
   path:
   get_storage:
+  card_swiper:
 
 dev_dependencies:
   flutter_test:
